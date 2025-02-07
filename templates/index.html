@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tire Accuracy Prediction</title>
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: #e5e6e7;
+            overflow-x: hidden;
+            background-color: #111111;
+            margin: 0;
+        }
+
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        @keyframes gradientAnimation {
+            0% {
+                background: rgba(0, 0, 0, 0.5);
+            }
+
+            100% {
+                background: rgba(0, 0, 0, 0.5);
+            }
+        }
+
+        header {
+            background-color: #FFE4C4;
+            color: #3E362E;
+            padding: 1rem 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+        }
+
+        header h1 {
+            display: inline-block;
+            transition: transform 0.6s ease-in-out;
+            font-size: 2rem;
+        }
+
+        header h1:hover {
+            animation: titleAnimation 1s infinite alternate;
+        }
+
+        @keyframes titleAnimation {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(10deg);
+            }
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: rgba(172, 137, 104, 0.8);
+            padding: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: #3E362E;
+            text-decoration: none;
+            margin: 0.5rem;
+            font-weight: bold;
+            position: relative;
+            font-size: 1rem;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        nav a::after {
+            content: attr(data-title);
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(172, 137, 104, 0.9);
+            color: #fff;
+            padding: 0.5rem;
+            border-radius: 5px;
+            opacity: 0;
+            transition: opacity 0.6s, transform 0.6s;
+            white-space: nowrap;
+            font-size: 0.8rem;
+        }
+
+        nav a:hover::after {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-10px);
+        }
+
+        section {
+            padding: 1rem;
+            margin: 1rem auto;
+            max-width: 95%;
+            opacity: 0;
+        }
+
+        .form-section {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin: 0.5rem 0;
+            font-weight: bold;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid #3E362E;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #93785B;
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.6s;
+        }
+
+        button:hover {
+            background-color: #111111;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        #output {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #fefbfb;
+        }
+
+        .info-section {
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .info-section h2 {
+            margin-top: 0;
+            text-align: center;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .info-section p {
+            line-height: 1.6;
+            text-align: justify;
+            margin-top: 1rem;
+        }
+
+        .info-section h2:hover {
+            transform: scale(1.1);
+        }
+
+        .image-gallery {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            overflow-x: auto;
+        }
+
+        .image-gallery img {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+        }
+
+        .image-gallery img.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .image-gallery img:hover {
+            transform: scale(2);
+            transition: transform 0.6s ease-in-out;
+        }
+
+        footer {
+            text-align: center;
+            padding: 0.5rem;
+            background-color: rgba(172, 137, 104, 0.8);
+            color: #3E362E;
+            margin-top: 1rem;
+            box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            font-size: 0.8rem;
+        }
+
+        .example-card {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            margin-bottom: 1rem;
+            transition: transform 0.6s ease-in-out;
+            text-align: center;
+        }
+
+        .example-card:hover {
+            transform: scale(1.05);
+        }
+
+        .example-card h3 {
+            margin-top: 0;
+            font-size: 1.2rem;
+            color: #fff;
+        }
+
+        .example-card p {
+            color: #ddd;
+            font-size: 0.9rem;
+        }
+
+        .example-card img {
+            display: block;
+            margin: 0.5rem auto;
+            width: 100%;
+            max-width: 150px;
+            height: auto;
+        }
+
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 1.5rem;
+            }
+
+            nav a {
+                font-size: 0.9rem;
+                margin: 0.3rem;
+            }
+
+            .info-section h2 {
+                font-size: 1.3rem;
+            }
+
+            .example-card h3 {
+                font-size: 1.1rem;
+            }
+
+            .example-card p {
+                font-size: 0.8rem;
+            }
+
+            button {
+                font-size: 0.9rem;
+                padding: 0.5rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="particles-js" class="background"></div>
+    <header>
+        <h1>Tire Accuracy Prediction</h1>
+    </header>
+    <nav>
+        <a href="#home" data-title="Home">Home</a>
+        <a href="#introduction" data-title="Introduction">Introduction</a>
+        <a href="#info" data-title="Info">Info</a>
+        <a href="#form" data-title="Form">Form</a>
+        <a href="#examples" data-title="Examples">Examples</a>
+        <a href="#contact" data-title="Contact">Contact</a>
+    </nav>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const homeButton = document.querySelector('nav a[href="#home"]');
+            
+            // Event listener for the "Home" link in the nav
+            homeButton.addEventListener('click', function (event) {
+                event.preventDefault(); // Prevent default anchor behavior
+                window.location.href = '/'; // Redirect to the welcome page
+            });
+        });
+    </script>
+    <section id="introduction" class="info-section">
+        <h2>Introduction</h2>
+        <p>Welcome to our Tire Accuracy Prediction Tool. This tool helps you predict the accuracy of tire performance
+            based on various parameters such as Load Index, Width, and Cost Price. Our model uses advanced machine
+            learning techniques to provide you with reliable predictions. Whether you are a car enthusiast, a mechanic,
+            or just a regular driver, understanding tire performance can help you make informed decisions about tire
+            purchases and maintenance. Our tool aims to simplify this process by offering accurate predictions and
+            valuable insights.</p>
+    </section>
+    <section id="info" class="info-section">
+        <h2>Understanding Tire Life</h2>
+        <h3 class="animated-heading">Load Index</h3>
+        <p>The load index of a tire indicates the maximum weight that the tire can support when properly inflated.
+            Higher load index numbers mean a greater load-carrying capacity. It is crucial to choose tires with the
+            appropriate load index for your vehicle to ensure safety and optimal performance. Overloading tires can lead
+            to excessive wear, reduced handling, and even tire failure. Always refer to your vehicle's manual to
+            determine the recommended load index for your tires.</p>
+        <h3 class="animated-heading">Width</h3>
+        <p>Tire width, measured in millimeters, affects the tire's contact with the road surface, influencing traction
+            and handling. Wider tires generally provide better grip but may also increase rolling resistance. The width
+            of the tire also impacts the vehicle's fuel efficiency and ride comfort. Narrower tires can improve fuel
+            economy and are often preferred for winter driving conditions due to better traction on snow and ice. When
+            selecting tire width, consider your driving habits and the typical road conditions you encounter.</p>
+        <h3 class="animated-heading">Cost Price</h3>
+        <p>The cost price of a tire can vary significantly based on its construction, brand, and performance
+            characteristics. Premium tires often offer better durability and performance but come at a higher price. It's
+            essential to balance cost with the specific needs of your vehicle and driving conditions. Investing in
+            quality tires can lead to long-term savings by reducing the frequency of replacements and improving fuel
+            efficiency.</p>
+        <h3 class="animated-heading">Tire Life</h3>
+        <p>Tire life is a critical aspect of vehicle maintenance and safety. Over time, tires wear out due to various
+            factors such as driving habits, road conditions, and weather. It's essential to regularly check your tires
+            for signs of wear and tear, including tread depth, cracks, and bulges. Most tires come with tread wear
+            indicators that show when the tire needs to be replaced. Additionally, it's recommended to replace tires
+            every six years, regardless of tread wear, as the rubber compounds degrade over time. Proper tire
+            maintenance, such as regular rotation, balancing, and alignment, can extend the life of your tires.
+            Monitoring tire pressure and ensuring it is at the recommended level also helps in maintaining tire
+            longevity. If you notice any unusual vibrations or handling issues, it may be a sign that your tires need
+            attention. Always consult your vehicle's manual and follow the manufacturer's guidelines for tire
+            maintenance and replacement.</p>
+        <p>
+            <b>Best Accuracy:</b> 95-100% (Excellent condition). Tire replacement is likely not needed.<br>
+            <b>Worst Accuracy:</b> Below 70% (Poor condition). Tire replacement is highly recommended immediately.
+        </p>
+        <p>
+            Here's a general guideline based on accuracy ranges:
+        <ul>
+            <li><b>90-100%:</b> Tires are in excellent condition. Expect them to last for 12+ months.</li>
+            <li><b>80-89%:</b> Tires are in good condition. Monitor them and expect a lifespan of 6-12 months.</li>
+            <li><b>70-79%:</b> Tires are in fair condition. Plan for replacement within 3-6 months.</li>
+            <li><b>Below 70%:</b> Tires are in poor condition. Replace them immediately for safety.</li>
+        </ul>
+        </p>
+        <div class="image-gallery" style="gap: 1rem;">
+            <img src="{{ url_for('static', filename='images/f.jpg') }}" alt="Tire1">   
+            <img src="{{ url_for('static', filename='images/g.jpg') }}" alt="Tire 2">
+            <img src="{{ url_for('static', filename='images/h.jpg') }}" alt="Tire 3">
+        </div>
+    </section>
+    <style>
+        .animated-heading {
+            display: inline-block;
+            animation: headingAnimation 1s infinite alternate;
+        }
+
+        @keyframes headingAnimation {
+            0% {
+                transform: translateY(0);
+            }
+
+            100% {
+                transform: translateY(-10px);
+            }
+        }
+    </style>
+    <div class="button-container">
+        <button id="open-form-btn"
+            style="font-size: 1.2rem; padding: 0.8rem 1.5rem; background-color: #93785B; color: white; border: none; border-radius: 5px; transition: background-color 0.6s;">Let's
+            Check the Accuracy</button>
+    </div>
+    <style>
+        /* Existing modal styles remain the same */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: tan;
+            margin: 0; /* Remove margin for full screen */
+            padding: 0; /* Remove padding for full screen */
+            border: none; /* Remove border for full screen */
+            width: 100%;
+            height: 100%;
+            border-radius: 0; /* Remove border-radius for full screen */
+            box-shadow: none; /* Remove box-shadow for full screen */
+            position: relative;
+        }
+
+        .close-btn {
+            color: brown;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: #aaa;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const formButton = document.querySelector('nav a[href="#form"]');
+            const accuracyButton = document.getElementById('open-form-btn');
+            const modal = document.getElementById('tire-details-modal');
+            const closeBtn = document.querySelector('.close-btn');
+
+            // Function to open the modal
+            function openModal() {
+                modal.style.display = 'block';
+            }
+
+            // Event listener for the "Form" link in the nav
+            formButton.addEventListener('click', function (event) {
+                event.preventDefault(); // Prevent default anchor behavior
+                openModal(); // Open the modal
+            });
+
+            // Event listener for the "Let's Check the Accuracy" button
+            accuracyButton.addEventListener('click', openModal);
+
+            // Event listener for the close button
+            closeBtn.addEventListener('click', function () {
+                modal.style.display = 'none';
+            });
+
+            // Close the modal if the user clicks outside of it
+            window.addEventListener('click', function (event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+    </script>
+
+    <div id="tire-details-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <iframe src="/entryform" frameborder="0" style="width: 100%; height: 100%;"></iframe>
+        </div>
+    </div>
+    <section id="examples" class="info-section">
+        <h2>Examples</h2>
+        <div class="example-card">
+            <h3> 1: High-Performance Tires</h3>
+            <p>High-performance tires are designed for superior grip and stability, making them ideal for sports cars.
+                Our model predicts high accuracy for these tires due to their reinforced sidewalls and advanced rubber
+                compounds. Speed ratings for UHP tires range from Z rated 240+ km/h to W, Y and (Y) for 300+ km/h.
+                Examples of the HIGH PERFORMANCES TYRE are :- HangKook, TOYO Tyres Etc</p>
+            <p>Predicted accuracy: 95%</p>
+            <img src="{{ url_for('static', filename='images/b.jepg') }}" alt="High Performance Tire">
+        </div>
+        <div class="example-card">
+            <h3> 2: All-Season Tires</h3>
+            <p>All-season tires provide balanced performance in various weather conditions. Our model estimates their
+                accuracy by analyzing tread depth, material composition, and wear resistance. All season tyre have a
+                tread pattern that is designed to provide traction in a variety of weather conditions. Examples of the
+                ALL SEASON TYRE are :- Michelin, Bridgestone, Goodyear Etc</p>
+            <p>Predicted accuracy: 85%</p>
+            <img src="{{ url_for('static', filename='images/c.jepg') }}" alt="All Season Tire">
+        </div>
+        <div class="example-card">
+            <h3> 3: Off-Road Tires</h3>
+            <p>Off-road tires have deep treads for better traction on rough terrains. Our accuracy prediction considers
+                tread pattern efficiency and rubber durability. Built in the rim guard to protect the wheel from damage.
+                Examples of the OFF ROAD TYRE are :- BFGoodrich, Cooper, Falken Etc</p>
+            <p>Predicted accuracy: 90%</p>
+            <img src="{{ url_for('static', filename='images/d.jepg') }}" alt="Off Road Tire">
+        </div>
+        <div class="example-card">
+            <h3> 4: Economy Tires</h3>
+            <p>Economy tires focus on affordability and durability. The accuracy prediction evaluates rolling resistance
+                and longevity to help users make cost-effective choices. It provide the budget friendly options for the
+                drivers. Examples of the ECONOMY TYRE are :- Nankang, Federal, Nexen Etc</p>
+            <p>Predicted accuracy: 80%</p>
+            <img src="{{ url_for('static', filename='images/e.jepg') }}" alt="Economy Tire">
+        </div>
+    </section>
+    <section id="contact" class="info-section">
+        <h2>Contact Us</h2>
+        <div class="container" style="text-align: center;">
+        </div>
+        <div class="contact-info" style="text-align: center;"></div>
+            <h3>Contact Details</h3>
+            <p><strong>Phone:</strong> +91 7983337456 , +91 6397151942 </p>
+            <p><strong>Email:</strong> vchaudhary0428@gmail.com ,vishal112006jain@gmail.com </p>
+            <p><strong>Address:</strong> Meerut, UttarPradesh, INDIA</p>
+            <a href="https://wa.me/7983337456" target="_blank">
+                <img src="{{ url_for('static', filename='images/whatsappicon.png') }}" alt="Chat with us on WhatsApp" style="display: inline-block;">
+            </a>
+        </div>
+    </section>
+    <footer>
+        <p>Copyright &copy; 2025 Tire Prediction Tool. All Rights Reserved.</p>
+    </footer>
+    <script>
+        document.addEventListener("scroll", () => {
+            const images = document.querySelectorAll(".image-gallery img");
+            const windowHeight = window.innerHeight;
+
+            images.forEach(img => {
+                const rect = img.getBoundingClientRect();
+                if (rect.top <= windowHeight - 100) {
+                    img.classList.add("visible");
+                }
+            });
+        });
+        const inputs = document.querySelectorAll("input");
+        inputs.forEach((input, index) => {
+            input.addEventListener("keydown", (event) => {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    const nextInput = inputs[index + 1];
+                    if (nextInput) {
+                        nextInput.focus();
+                    } else {
+                        document.getElementById("submit-btn").focus();
+                    }
+                }
+            });
+        });
+        // Anime.js animations
+        document.addEventListener("DOMContentLoaded", () => {
+            anime({
+                targets: 'header, nav, section, footer',
+                opacity: [0, 1],
+                translateY: [-50, 0],
+                delay: anime.stagger(200),
+                duration: 1000,
+                easing: 'easeOutExpo'
+            });
+            // Initialize particles.js
+            particlesJS('particles-js', {
+                particles: {
+                    number: {
+                        value: 80,
+                        density: {
+                            enable: true,
+                            value_area: 800
+                        }
+                    },
+                    color: {
+                        value: '#ffffff'
+                    },
+                    shape: {
+                        type: 'circle',
+                        stroke: {
+                            width: 0,
+                            color: '#000000'
+                        },
+                        polygon: {
+                            nb_sides: 5
+                        },
+                        image: {
+                            src: 'img/github.svg',
+                            width: 100,
+                            height: 100
+                        }
+                    },
+                    opacity: {
+                        value: 0.5,
+                        random: false,
+                        anim: {
+                            enable: false,
+                            speed: 1,
+                            opacity_min: 0.1,
+                            sync: false
+                        }
+                    },
+                    size: {
+                        value: 3,
+                        random: true,
+                        anim: {
+                            enable: false,
+                            speed: 40,
+                            size_min: 0.1,
+                            sync: false
+                        }
+                    },
+                    line_linked: {
+                        enable: true,
+                        distance: 150,
+                        color: '#ffffff',
+                        opacity: 0.4,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 6,
+                        direction: 'none',
+                        random: false,
+                        straight: false,
+                        out_mode: 'out',
+                        bounce: false,
+                        attract: {
+                            enable: false,
+                            rotateX: 600,
+                            rotateY: 1200
+                        }
+                    }
+                },
+                interactivity: {
+                    detect_on: 'canvas',
+                    events: {
+                        onhover: {
+                            enable: true,
+                            mode: 'repulse'
+                        },
+                        onclick: {
+                            enable: true,
+                            mode: 'push'
+                        },
+                        resize: true
+                    },
+                    modes: {
+                        grab: {
+                            distance: 400,
+                            line_linked: {
+                                opacity: 1
+                            }
+                        },
+                        bubble: {
+                            distance: 400,
+                            size: 40,
+                            duration: 2,
+                            opacity: 8,
+                            speed: 3
+                        },
+                        repulse: {
+                            distance: 200,
+                            duration: 0.4
+                        },
+                        push: {
+                            particles_nb: 4
+                        },
+                        remove: {
+                            particles_nb: 2
+                        }
+                    }
+                },
+                retina_detect: true
+            });
+        });
+    </script>
+</body>
+
+</html>
