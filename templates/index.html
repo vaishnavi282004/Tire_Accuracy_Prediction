@@ -190,7 +190,7 @@
             display: flex;
             justify-content: center;
             gap: 0.5rem;
-            margin-top: 1rem;
+            margin-top: 0rem;
             overflow-x: auto;
         }
 
@@ -201,7 +201,7 @@
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
             transform: translateY(100px);
             opacity: 0;
-            transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+            transition: transform 0.5s ease-in-out;
         }
 
         .image-gallery img.visible {
@@ -525,6 +525,9 @@
             <p><strong>Address:</strong> Meerut, UttarPradesh, INDIA</p>
             <a href="https://wa.me/7983337456" target="_blank">
                 <img src="{{ url_for('static', filename='images/whatsappicon.png') }}" alt="Chat with us on WhatsApp" style="display: inline-block;">
+            </a>
+            <a href="https://www.linkedin.com/in/your-profile" target="_blank">
+                <img src="{{ url_for('static', filename='images/linkedinicon.svg') }}" alt="Connect with us on LinkedIn" style="display: inline-block;">
             </a>
         </div>
     </section>
