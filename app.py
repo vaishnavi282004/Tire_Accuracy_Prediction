@@ -46,4 +46,4 @@ def predict():
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
-    app.run(host='172.20.10.5', port=port, debug=True)
+    app.run(host='192.168.55.42', port=port, debug=True)
